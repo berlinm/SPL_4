@@ -1,31 +1,77 @@
 import sqlite3
+import os.path
+
+"""
+this class is responsible to the creation of the db: establishes a connection to the db, creating tables, 
+insertion to the tables
+@Author: berlin
+ """
 
 
-# TODO: need to figure out why <NOT> NULL does not compile
-def main():
+def createdb():
     # if db does not exists it will be created
+    if os.path.isfile("classes.db"):
+        return
     dbcon = sqlite3.connect("classes.db")
     with dbcon:
         cursor = dbcon.cursor()
-        sql_create_students = """ CREATE TABLE IF NOT EXISTS
-                              Students(grade TEXT PRIMARY KEY,
-                              count INTEGER NOT NULL);"""
+        sql_create_students = """ CREATE TABLE students(grade TEXT PRIMARY KEY,
+                                  count INTEGER NOT NULL);"""
 
-        sql_create_courses = """CREATE TABLE IF NOT EXISTS
-                            courses (id INTEGER PRIMARY KEY,
+        sql_create_courses = """CREATE TABLE courses (id INTEGER PRIMARY KEY,
                             course_name TEXT NOT NULL,
                             student TEXT NOT NULL,
-                            number_of_students INTEGER NOT NULL)"""
+                            number_of_students INTEGER NOT NULL,
+                            class_id INTEGER REFERENCES classrooms(id),
+                            course_length INTEGER NOT NULL);"""
 
-        sql_create_classrooms = """CREATE TABLE IF NOT EXISTS
-                                classrooms(id INTEGER PRIMARY KEY,
+        sql_create_classrooms = """CREATE TABLE classrooms(id INTEGER PRIMARY KEY,
                                 location TEXT NOT NULL,
                                 current_course_id INTEGER NOT NULL,
-                                current_course_time_left INTEGER NOT NULL)"""
+                                current_course_time_left INTEGER NOT NULL);"""
         cursor.execute(sql_create_classrooms)
         cursor.execute(sql_create_courses)
         cursor.execute(sql_create_students)
 
 
-if __name__ == '__main__':
-    main()
+def read_from_file(path_to_file, cursor):
+    with open(path_to_file) as input_file:
+        for line in input_file:
+            if line[0] == 'r':
+                insert_rooms(line[2:])
+            elif line[0] == 'c':
+                insert_course(line[2:])
+            elif line[0] == 's':
+                insert_students(line[2:])
+
+
+def insert_rooms(room, cursor):
+    # assumes that room
+    id, location = room.split(",")
+    id = id.strip()
+    location = location.strip()
+    cursor.execute("""INSERT INTO classrooms (id, location)
+                    VALUES(?, ?)""", (id, location))
+
+
+def insert_course(course, cursor):
+    # assumes that course
+    id, course_name, student, number_of_students, class_id, course_length = course.split(",")
+    id = id.strip()
+    course_name = course_name.strip()
+    student = student.strip()
+    number_of_students = number_of_students.strip()
+    class_id = class_id.strip()
+    course_length = course_length.split()
+    cursor.execute("""INSERT INTO courses
+                    VALUES(?, ?, ?, ?, ?, ?)""",
+                   (id, course_name, student, number_of_students, class_id, course_length))
+
+
+def insert_students(student, cursor):
+    # assumes that student
+    grade, count = student.split()
+    grade = grade.split()
+    count = count.split()
+    cursor.execute("""INSERT INTO students
+                    VALUES(?, ?)""", (grade, count))
