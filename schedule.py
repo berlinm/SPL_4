@@ -97,7 +97,7 @@ def main():
             cursor.execute("SELECT * FROM students")
             list_of_students = cursor.fetchall()
             print_table(list_of_students, "students")
-
+            
             dbcon.commit()
 
 
