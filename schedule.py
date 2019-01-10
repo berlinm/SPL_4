@@ -9,7 +9,7 @@ def main():
     sql_get_courses = """SELECT * FROM courses;"""
     cursor.execute(sql_get_courses)
     list_courses = cursor.fetchall()
-    
+
     while isfile("classes.db") and len(list_courses) > 0:
         sql_get_classes = """SELECT * FROM classrooms;"""
         cursor.execute(sql_get_classes)
