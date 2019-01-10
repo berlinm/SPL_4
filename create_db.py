@@ -50,8 +50,8 @@ def insert_rooms(room, cursor):
     id, location = room.split(",")
     id = id.strip()
     location = location.strip()
-    cursor.execute("""INSERT INTO classrooms (id, location, 0)
-                    VALUES(?, ?, ?)""", (id, location))
+    cursor.execute("""INSERT INTO classrooms
+                    VALUES(?, ?, ?, ?)""", (id, location, 0, 0))
 
 
 def insert_course(course, cursor):
