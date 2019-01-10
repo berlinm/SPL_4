@@ -8,13 +8,13 @@ insertion to the tables
  """
 
 
-def createdb():
+def main():
     # if db does not exists it will be created
     if os.path.isfile("classes.db"):
         return
-    dbcon = sqlite3.connect("classes.db")
-    with dbcon:
-        cursor = dbcon.cursor()
+    db_connection = sqlite3.connect("classes.db")
+    with db_connection:
+        cursor = db_connection.cursor()
         sql_create_students = """ CREATE TABLE students(grade TEXT PRIMARY KEY,
                                   count INTEGER NOT NULL);"""
 
@@ -75,3 +75,7 @@ def insert_students(student, cursor):
     count = count.split()
     cursor.execute("""INSERT INTO students
                     VALUES(?, ?)""", (grade, count))
+
+
+if __name__ == '__main__':
+    main()
