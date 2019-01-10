@@ -38,11 +38,11 @@ def read_from_file(path_to_file, cursor):
     with open(path_to_file) as input_file:
         for line in input_file:
             if line[0] == 'r':
-                insert_rooms(line[2:])
+                insert_rooms(line[2:], cursor)
             elif line[0] == 'c':
-                insert_course(line[2:])
+                insert_course(line[2:], cursor)
             elif line[0] == 's':
-                insert_students(line[2:])
+                insert_students(line[2:], cursor)
 
 
 def insert_rooms(room, cursor):
@@ -50,8 +50,8 @@ def insert_rooms(room, cursor):
     id, location = room.split(",")
     id = id.strip()
     location = location.strip()
-    cursor.execute("""INSERT INTO classrooms (id, location)
-                    VALUES(?, ?)""", (id, location))
+    cursor.execute("""INSERT INTO classrooms (id, location, 0)
+                    VALUES(?, ?, ?)""", (id, location))
 
 
 def insert_course(course, cursor):
