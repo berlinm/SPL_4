@@ -1,5 +1,6 @@
 import sqlite3
 import os.path
+import sys
 
 """
 this class is responsible to the creation of the db: establishes a connection to the db, creating tables, 
@@ -32,16 +33,34 @@ def main():
         cursor.execute(sql_create_classrooms)
         cursor.execute(sql_create_courses)
         cursor.execute(sql_create_students)
+        read_from_file(sys.argv[1], cursor)
+        cursor.execute("SELECT * FROM courses")
+        list_of_courses = cursor.fetchall()
+        print_table(list_of_courses, "courses")
+
+        cursor.execute("SELECT * FROM classrooms")
+        list_of_classes = cursor.fetchall()
+        print_table(list_of_classes, "classrooms")
+
+        cursor.execute("SELECT * FROM students")
+        list_of_students = cursor.fetchall()
+        print_table(list_of_students, "students")
+
+
+def print_table(table, name):
+    print(name)
+    for item in table:
+        print(item)
 
 
 def read_from_file(path_to_file, cursor):
     with open(path_to_file) as input_file:
         for line in input_file:
-            if line[0] == 'r':
+            if line[0] == 'R':
                 insert_rooms(line[2:], cursor)
-            elif line[0] == 'c':
+            elif line[0] == 'C':
                 insert_course(line[2:], cursor)
-            elif line[0] == 's':
+            elif line[0] == 'S':
                 insert_students(line[2:], cursor)
 
 
@@ -62,7 +81,7 @@ def insert_course(course, cursor):
     student = student.strip()
     number_of_students = number_of_students.strip()
     class_id = class_id.strip()
-    course_length = course_length.split()
+    course_length = course_length.strip()
     cursor.execute("""INSERT INTO courses
                     VALUES(?, ?, ?, ?, ?, ?)""",
                    (id, course_name, student, number_of_students, class_id, course_length))
@@ -70,9 +89,9 @@ def insert_course(course, cursor):
 
 def insert_students(student, cursor):
     # assumes that student
-    grade, count = student.split()
-    grade = grade.split()
-    count = count.split()
+    grade, count = student.split(",")
+    grade = grade.strip()
+    count = count.strip()
     cursor.execute("""INSERT INTO students
                     VALUES(?, ?)""", (grade, count))
 
