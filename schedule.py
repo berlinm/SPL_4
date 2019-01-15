@@ -18,7 +18,7 @@ def main():
         for currclass in list_of_classes:
             if currclass[3] == 0:
                 sql_courses_by_id = """ SELECT * FROM courses WHERE class_id = ? """
-                cursor.execute(sql_courses_by_id, (currclass[0],))
+                cursor.execute(sql_courses_by_id, (str(currclass[0])),)
                 list_of_courses = cursor.fetchall()
 
                 if len(list_of_courses) > 0:
@@ -49,42 +49,42 @@ def main():
             cursor.execute(sql_get_classes)
             list_of_classes = cursor.fetchall()
 
-            for currclass in list_of_classes:
-                if currclass[3] == 0 and currclass[2] != 0:
-                    sql_get_name_by_id = """SELECT course_name FROM courses WHERE id = ?"""
-                    cursor.execute(sql_get_name_by_id, str(currclass[2]),)
-                    name1 = cursor.fetchall()
+        for currclass in list_of_classes:
+            if currclass[3] == 0 and currclass[2] != 0:
+                sql_get_name_by_id = """SELECT course_name FROM courses WHERE id = ?"""
+                cursor.execute(sql_get_name_by_id, str(currclass[2]),)
+                name1 = cursor.fetchall()
 
-                    print("(" + str(x) + ")" + " " + str(currclass[1]) + ":" + " " + str(name1[0][0]) + " is done")
-                    cursor.execute("DELETE FROM courses WHERE id =?", str(currclass[2]),)
-                    cursor.execute("SELECT * FROM courses WHERE class_id = ?", (str(currclass[0])),)
-                    list_of_courses = cursor.fetchall()
-                    if len(list_of_courses) > 0:
-                        print("(" + str(x) + ")" + " " + str(currclass[1]) + ":" + " " + str(list_of_courses[0][1]) +
-                              " is schedule to start")
-                        task4 = (list_of_courses[0][0], list_of_courses[0][5], currclass[0])
-                        cursor.execute(sql_update_classes, task4)
-                        db_connection.commit()
+                print("(" + str(x) + ")" + " " + str(currclass[1]) + ":" + " " + str(name1[0][0]) + " is done")
+                cursor.execute("DELETE FROM courses WHERE id =?", str(currclass[2]),)
+                cursor.execute("SELECT * FROM courses WHERE class_id = ?", (str(currclass[0])),)
+                list_of_courses = cursor.fetchall()
+                if len(list_of_courses) > 0:
+                    print("(" + str(x) + ")" + " " + str(currclass[1]) + ":" + " " + str(list_of_courses[0][1]) +
+                             " is schedule to start")
+                    task4 = (list_of_courses[0][0], list_of_courses[0][5], currclass[0])
+                    cursor.execute(sql_update_classes, task4)
+                    db_connection.commit()
 
-                        task5 = (list_of_courses[0][3], list_of_courses[0][2])
-                        cursor.execute(sql_update_students, task5)
-                        db_connection.commit()
-
-                    else:
-                        query = """UPDATE classrooms SET current_course_id = 0 
-                        WHERE id =?"""
-                        cursor.execute(query, str(currclass[0]))
-                        db_connection.commit()
+                    task5 = (list_of_courses[0][3], list_of_courses[0][2])
+                    cursor.execute(sql_update_students, task5)
+                    db_connection.commit()
 
                 else:
-                    cursor.execute("SELECT course_length FROM courses WHERE id =?", (str(currclass[2])),)
-                    time = cursor.fetchone()
-                    if time is not None:
-                        if time[0] != currclass[3] and time[0] != 0:
-                            cursor.execute("SELECT course_name FROM courses WHERE id =?", (str(currclass[2])),)
-                            name1 = cursor.fetchall()
-                            print("(" + str(x) + ")" + " " + str(currclass[1]) + ":" + " occupied by " + str(
-                                name1[0][0]))
+                    query = """UPDATE classrooms SET current_course_id = 0 
+                    WHERE id =?"""
+                    cursor.execute(query, str(currclass[0]))
+                    db_connection.commit()
+
+            else:
+                cursor.execute("SELECT course_length FROM courses WHERE id =?", (str(currclass[2])),)
+                time = cursor.fetchone()
+                if time is not None:
+                    if time[0] != currclass[3] and time[0] != 0:
+                        cursor.execute("SELECT course_name FROM courses WHERE id =?", (str(currclass[2])),)
+                        name1 = cursor.fetchall()
+                        print("(" + str(x) + ")" + " " + str(currclass[1]) + ":" + " occupied by " + str(
+                            name1[0][0]))
 
         x = x + 1
 
