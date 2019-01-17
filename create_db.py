@@ -5,15 +5,14 @@ import sys
 """
 this class is responsible to the creation of the db: establishes a connection to the db, creating tables, 
 insertion to the tables
-@Author: berlin
  """
 
 
 def main():
     # if db does not exists it will be created
-    if os.path.isfile("classes.db"):
+    if os.path.isfile("schedule.db"):
         return
-    db_connection = sqlite3.connect("classes.db")
+    db_connection = sqlite3.connect("schedule.db")
     with db_connection:
         cursor = db_connection.cursor()
         sql_create_students = """ CREATE TABLE students(grade TEXT PRIMARY KEY,

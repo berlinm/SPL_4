@@ -3,14 +3,14 @@ import sqlite3
 
 
 def main():
-    db_connection = sqlite3.connect("classes.db")  # need to change the name
+    db_connection = sqlite3.connect("schedule.db")
     cursor = db_connection.cursor()
     x = 0
     sql_get_courses = """SELECT * FROM courses"""
     cursor.execute(sql_get_courses)
     list_of_courses = cursor.fetchall()
 
-    while isfile("classes.db") and len(list_of_courses) > 0:
+    while isfile("schedule.db") and len(list_of_courses) > 0:
         sql_get_classes = """SELECT * FROM classrooms"""
         cursor.execute(sql_get_classes)
         list_of_classes = cursor.fetchall()
